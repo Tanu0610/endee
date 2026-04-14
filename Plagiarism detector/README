@@ -1,0 +1,112 @@
+🔍 AI Plagiarism Detector
+> Semantic plagiarism detection powered by **Endee Vector Database** and **Sentence Transformers**
+---
+📌 Project Overview
+A modern AI-powered plagiarism detector that goes beyond simple keyword matching. It understands the meaning of text and detects similarity even when content is paraphrased or reworded — something traditional plagiarism tools cannot do.
+Key Difference
+Feature	Traditional Tools	This Project
+Exact word match	✅	✅
+Paraphrased text	❌	✅
+Synonym detection	❌	✅
+AI-powered	❌	✅
+---
+✨ Key Features
+📥 Store original documents in Endee vector database
+🔍 Check any text for semantic similarity against stored documents
+📊 Similarity score shown as percentage (0% – 100%)
+⚠️ Automatic plagiarism verdict with color-coded results
+🎯 Adjustable similarity threshold
+🖥️ Clean Streamlit web interface
+---
+🏗️ System Workflow
+```
+Input Text
+    ↓
+Sentence Transformer (all-MiniLM-L6-v2)
+    ↓
+384-dimensional Embedding Vector
+    ↓
+Endee Vector Database (cosine similarity search)
+    ↓
+Top-K Similar Documents Retrieved
+    ↓
+Similarity Score Calculated
+    ↓
+Plagiarism Verdict Displayed
+```
+---
+🛠️ Tech Stack
+Tool	Purpose
+Python 3.10+	Core language
+Endee	Vector database for storing and searching embeddings
+Sentence Transformers	Convert text to semantic embeddings
+Streamlit	Web interface
+Docker	Running Endee locally
+---
+🚀 Setup Instructions
+Step 1 — Clone this Repository
+```bash
+git clone https://github.com/YOUR_USERNAME/plagiarism-detector.git
+cd plagiarism-detector
+```
+Step 2 — Start Endee Vector Database (Docker required)
+```bash
+docker run \
+  -p 8080:8080 \
+  -v ./endee-data:/data \
+  --name endee-server \
+  endeeio/endee-server:latest
+```
+Verify it's running by opening http://localhost:8080 in your browser.
+Step 3 — Install Python Dependencies
+```bash
+pip install -r requirements.txt
+```
+Step 4 — Run the App
+```bash
+streamlit run app.py
+```
+Open http://localhost:8501 in your browser.
+---
+📂 Project Structure
+```
+plagiarism-detector/
+│
+├── app.py              ← Main Streamlit web app
+├── embeddings.py       ← Text → vector embedding logic
+├── database.py         ← Endee vector DB operations
+├── similarity.py       ← Similarity search & scoring
+├── requirements.txt    ← Python dependencies
+└── README.md           ← Project documentation
+```
+---
+🗄️ How Endee is Used
+Endee serves as the core vector database in this project:
+Index Creation — A cosine similarity index with 384 dimensions is created in Endee
+Upserting — Each document's embedding is stored in Endee with its ID and metadata
+Querying — When checking for plagiarism, Endee performs a fast nearest-neighbor search to find the most similar stored documents
+```python
+# Example: Storing a document in Endee
+index.upsert([{
+    "id": "doc1",
+    "vector": embedding,     # 384-dim float list
+    "meta": {"title": "My Document"}
+}])
+
+# Example: Searching for similar documents
+results = index.query(vector=query_embedding, top_k=5)
+```
+---
+📊 Similarity Score Guide
+Score	Verdict
+0% – 30%	✅ Original
+31% – 60%	⚠️ Partially Similar
+61% – 80%	🚨 Likely Plagiarised
+81% – 100%	❌ Plagiarised
+---
+🙏 Acknowledgements
+Endee Vector Database
+Sentence Transformers
+Streamlit
+---
+Submitted as part of the Endee Internship Evaluation
